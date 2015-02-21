@@ -1,0 +1,1 @@
+{ "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "name" : "_id_", "ns" : "cumberland-group.ourprocesses" }, { "v" : 1, "unique" : true, "key" : { "slug" : 1 }, "name" : "slug_1", "ns" : "cumberland-group.ourprocesses", "background" : true, "safe" : null } ] }

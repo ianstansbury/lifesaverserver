@@ -3,12 +3,25 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var mongo = require('mongodb');
+var monk = require('monk');
+var db = monk('localhost:27017/lifesaver');
+
+
 var bodyParser = require('body-parser');
+var app = express();
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
+app.use(function(req,res,next){
+    req.db = db;
+    next();
+});
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
-var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
