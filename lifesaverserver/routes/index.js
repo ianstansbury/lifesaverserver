@@ -10,9 +10,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-app.post('/alarm', function (req, res) {
-  res.send('Got a POST request');
-})
+
 
 router.get('/vitals', function(req, res) {
 
@@ -147,7 +145,7 @@ router.get('/alert', function(req, res){
 	});
 });
 
-app.post('/alert', function(req, res){
+router.post('/alert', function(req, res){
 
 	var userId = "553474447"
 	var appKey = "LE_2CAFA83F2140EE3C_1"
@@ -229,7 +227,7 @@ app.post('/alert', function(req, res){
 			    res.status('Error::').json(response.message);
 			    this.retry(5000); // try again after 5 sec 
 			  } else {
-			  	res.json(data)
+			  	//res.json(data)
 			  	console.log(data)
 			  }
 			});  
@@ -239,7 +237,7 @@ app.post('/alert', function(req, res){
 			var deviceUrl3 = "/api/" + gatewayGuid + "/devices/" + cameraGUID + "/capture"
 			var jsonData3 = "image"
 		  	console.log(urlPrefix + deviceUrl3)
-		  	rest.post(urlPrefix + deviceUrl, {
+		  	rest.post(urlPrefix + deviceUrl3, {
 		  		headers : authHeaders,
 		  		data: jsonData3
 
@@ -252,7 +250,7 @@ app.post('/alert', function(req, res){
 			});  
 
 
-		  	//res.json(result)
+		  	res.json(result)
 		  }
 		});
 
@@ -260,11 +258,22 @@ app.post('/alert', function(req, res){
 	});
 });
 
-// app.post('/heartbeats', function(req, res) {
-// 	var db = req.db;
+router.post('/heartbeats', function(req, res) {
+	console.log(req.body)
+	console.log(req.body.heartbeat)
+	var heartbeats = req.body.heartbeat
+	var db = req.db;
+	var vitals = db.get('vitals')
+	vitals.update(
+		{userid: "1"},
+		{$set: {heartbeat: heartbeats}},
+		function (err) {
+			if(err) return done(err);
+		}
+	);
+	res.json("ok")
 
-// 	var heartbeats = req.body.heartbeats
-// })
+})
 
 router.get('/userlist', function(req, res) {
     var db = req.db;
