@@ -34,7 +34,7 @@ router.get('/vitals/:id', function(req, res) {
 
 router.get('/alert', function(req, res){
 
-	var userId = "553474447"
+	var userId = "553474466"
 	var appKey = "LE_2CAFA83F2140EE3C_1"
 	var urlPrefix = "https://systest.digitallife.att.com:443/penguin";
 	var uuid = ""
