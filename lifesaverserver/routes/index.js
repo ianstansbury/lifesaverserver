@@ -178,66 +178,81 @@ app.post('/alert', function(req, res){
     	var authHeaders = {"appKey": appKey, "requestToken": requestToken, "authToken": authtokens};
 
     	rest.get(urlPrefix + addedUrl, {headers : authHeaders}).on('complete', function(result) {
-    		console.log("got here1")
 		  if (result instanceof Error) {
 		    console.log('Error:', result.message);
 		  } else {
-		  	console.log("got here2")
 
 		  	var contentArray = result.content
 		  	var lightGUID = ""
 		  	var lockGUID = ""
 		  	var cameraGUID = ""
 
-		  	for (var device in contentArray){
-		  		if (data.deviceType === "smart-plug"){
-		  			lightGuid = data.deviceGuid
-		  		}else if(data.deviceType === "door-lock"){
-		  			lockGUID  = data.deviceGuid
-		  		}else if(data.deviceType === "camera"){
-		  			cameraGUID = data.deviceGuid
+		  	for(var i = 0; i < contentArray.length; i++) {
+		  		device = contentArray[i]
+		  		if (device.deviceType === "smart-plug"){
+		  			lightGUID = device.deviceGuid
+		  		}else if(device.deviceType === "door-lock"){
+		  			lockGUID  = device.deviceGuid
+		  		}else if(device.deviceType === "camera"){
+		  			cameraGUID = device.deviceGuid
 		  		}
 		  	}
 
 
 
 		  	//turn on lights
-			var deviceUrl = "/api/" + gatewayGuid + "/devices" + lightGuid + "/switch"
+			var deviceUrl = "/api/" + gatewayGuid + "/devices/" + lightGUID + "/switch"
 			var jsonData = "on"
-		  	rest.postJson(authurl, jsonData).on('complete', function(data,result) {
+			console.log(urlPrefix + deviceUrl)
+		  	rest.post(urlPrefix + deviceUrl, {
+		  		headers : authHeaders,
+		  		data: jsonData
+
+		  		}).on('complete', function(data,response) {
 			  if (result instanceof Error) {
-			    res.status('Error::').json(result.message);
+			    res.status('Error::').json(response.message);
 			    this.retry(5000); // try again after 5 sec 
 			  } else {
-
 			  }
 			});  
 
 			//unlock doors
-			var deviceUrl = "/api/" + gatewayGuid + "/devices" + lockGUID + "/lock"
-			jsonData = "unlock"
-		  	rest.postJson(authurl, jsonData).on('complete', function(data,result) {
+			var deviceUrl2 = "/api/" + gatewayGuid + "/devices/" + lockGUID + "/lock"
+			var jsonData2 = "unlock"
+			console.log(urlPrefix + deviceUrl2)
+		  	rest.post(urlPrefix + deviceUrl2, {
+		  		headers : authHeaders,
+		  		data: jsonData2
+
+		  		}).on('complete', function(data,response) {
 			  if (result instanceof Error) {
-			    res.status('Error::').json(result.message);
+			    res.status('Error::').json(response.message);
 			    this.retry(5000); // try again after 5 sec 
 			  } else {
-
+			  	res.json(data)
+			  	console.log(data)
 			  }
 			});  
+
 
 			//turn on camera
-			var deviceUrl = "/api/" + gatewayGuid + "/devices" + cameraGUID + "/capture"
-			jsonData = "image"
-		  	rest.postJson(authurl, jsonData).on('complete', function(data, result) {
+			var deviceUrl3 = "/api/" + gatewayGuid + "/devices/" + cameraGUID + "/capture"
+			var jsonData3 = "image"
+		  	console.log(urlPrefix + deviceUrl3)
+		  	rest.post(urlPrefix + deviceUrl, {
+		  		headers : authHeaders,
+		  		data: jsonData3
+
+		  		}).on('complete', function(data,response) {
 			  if (result instanceof Error) {
-			    res.status('Error::').json(result.message);
+			    res.status('Error::').json(response.message);
 			    this.retry(5000); // try again after 5 sec 
 			  } else {
-
 			  }
 			});  
 
-		  	res.json(result)
+
+		  	//res.json(result)
 		  }
 		});
 
