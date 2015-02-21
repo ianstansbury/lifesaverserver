@@ -260,6 +260,12 @@ app.post('/alert', function(req, res){
 	});
 });
 
+// app.post('/heartbeats', function(req, res) {
+// 	var db = req.db;
+
+// 	var heartbeats = req.body.heartbeats
+// })
+
 router.get('/userlist', function(req, res) {
     var db = req.db;
     var collection = db.get('usercollection');
